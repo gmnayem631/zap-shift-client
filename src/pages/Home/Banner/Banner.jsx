@@ -15,16 +15,17 @@ const Banner = () => {
       autoPlay={true}
       infiniteLoop={true}
       showThumbs={false}
+      className="max-w-7xl mx-auto"
     >
-      <div className="rounded-2xl">
+      <div className="">
         <img src={bannerImg1} />
         <p className="legend font-semibold text-xl">On Time Delivery</p>
       </div>
-      <div className="rounded-2xl">
+      <div className="">
         <img src={bannerImg2} />
         <p className="legend font-semibold text-xl">Fastest Delivery</p>
       </div>
-      <div className="rounded-2xl">
+      <div className="">
         <img src={bannerImg3} />
         <p className="legend font-semibold text-xl">Delivery in 30 Minutes</p>
       </div>

@@ -7,16 +7,16 @@ const Navbar = () => {
     <>
       {" "}
       <li>
-        <NavLink>Home</NavLink>
+        <NavLink className="text-lg">Home</NavLink>
       </li>
       <li>
-        <NavLink>About Us</NavLink>
+        <NavLink className="text-lg">About Us</NavLink>
       </li>
     </>
   );
 
   return (
-    <div className="navbar bg-base-100 shadow-sm">
+    <div className="navbar bg-base-100 max-w-7xl mx-auto">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
