@@ -21,7 +21,7 @@ const logos = [
 const ClientLogosMarquee = () => {
   return (
     <div className="py-8 max-w-7xl mx-auto">
-      <h2 className="text-2xl md:text-3xl font-bold text-center mb-10">
+      <h2 className="text-2xl md:text-3xl text-[#03373D] font-extrabold text-center mb-10">
         We've helped thousands of sales teams
       </h2>
       <Marquee
@@ -35,7 +35,7 @@ const ClientLogosMarquee = () => {
             <img
               src={logo}
               alt={`Client Logo ${index + 1}`}
-              className="h-16 transition-all duration-300"
+              className="h-6 mx-9 transition-all duration-300"
             />
           </div>
         ))}
