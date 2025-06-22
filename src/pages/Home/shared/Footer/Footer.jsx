@@ -7,9 +7,9 @@ const Footer = () => {
       <aside>
         <ProFastLogo></ProFastLogo>
         <p className="font-bold">
-          ACME Industries Ltd.
+          On Time. Every Time. With ProFast.
           <br />
-          Providing reliable tech since 1992
+          ProFast Delivering reliability since 2025
         </p>
         <p>Copyright © {new Date().getFullYear()} - All right reserved</p>
       </aside>
