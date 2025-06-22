@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Outlet } from "react-router";
 import Navbar from "../pages/Home/shared/Navbar/Navbar";
 import Footer from "../pages/Home/shared/Footer/Footer";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const RootLayout = () => {
+  useEffect(() => {
+    AOS.init();
+  }, []);
   return (
     <div>
       <header className="shadow-sm bg-base-100 ">

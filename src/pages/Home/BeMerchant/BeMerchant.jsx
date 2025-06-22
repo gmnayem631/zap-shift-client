@@ -3,7 +3,11 @@ import location from "../../../assets/location-merchant.png";
 
 const BeMerchant = () => {
   return (
-    <div className="hero bg-[#03373D] max-w-7xl mx-auto p-20 rounded-3xl">
+    <div
+      data-aos="slide-left"
+      data-aos-duration={1500}
+      className="bg-[url('assets/be-a-merchant-bg.png')] bg-no-repeat bg-[#03373D] max-w-7xl mx-auto p-20 rounded-3xl"
+    >
       <div className="hero-content flex-col lg:flex-row-reverse">
         <img src={location} className="max-w-sm rounded-lg shadow-2xl" />
         <div>
