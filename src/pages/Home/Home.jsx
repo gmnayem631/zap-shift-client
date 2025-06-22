@@ -4,11 +4,13 @@ import Services from "./Services/Services";
 import ClientLogosMarquee from "./ClientLogosMarquee/ClientLogosMarquee";
 import Benefit from "./Benefits/Benefits";
 import BeMerchant from "./BeMerchant/BeMerchant";
+import HowItWorks from "./HowItWorks/HowItWorks";
 
 const Home = () => {
   return (
     <div>
       <Banner></Banner>
+      <HowItWorks></HowItWorks>
       <Services></Services>
       <ClientLogosMarquee></ClientLogosMarquee>
       <div className="border-1 border-dashed mt-5 border-[#03464D] max-w-7xl mx-auto"></div>
