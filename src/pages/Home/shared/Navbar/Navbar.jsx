@@ -5,9 +5,15 @@ import ProFastLogo from "../ProFastLogo/ProFastLogo";
 const Navbar = () => {
   const navItems = (
     <>
-      {" "}
       <li>
-        <NavLink className="text-lg">Home</NavLink>
+        <NavLink to={"/"} className="text-lg">
+          Home
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to={"/coverage"} className="text-lg">
+          Coverage
+        </NavLink>
       </li>
       <li>
         <NavLink className="text-lg">About Us</NavLink>
@@ -43,9 +49,9 @@ const Navbar = () => {
             {navItems}
           </ul>
         </div>
-        <a className="btn btn-ghost text-xl">
+        <div className="btn btn-ghost text-xl">
           <ProFastLogo></ProFastLogo>
-        </a>
+        </div>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">{navItems}</ul>
