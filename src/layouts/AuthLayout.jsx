@@ -5,14 +5,18 @@ import ProFastLogo from "../pages/Home/shared/ProFastLogo/ProFastLogo";
 
 const AuthLayout = () => {
   return (
-    <div className="p-12 bg-base-200 max-w-7xl mx-auto">
-      <ProFastLogo></ProFastLogo>
-      <div className="hero-content flex-col lg:flex-row-reverse">
-        <div className="flex-1">
-          <img src={authImage} className="max-w-sm rounded-lg shadow-2xl" />
+    <div className="p-5 min-h-screen max-w-7xl mx-auto flex flex-col">
+      <ProFastLogo />
+
+      <div className="flex flex-1 flex-col lg:flex-row-reverse items-stretch rounded-3xl overflow-hidden mt-4">
+        {/* Right side image */}
+        <div className="bg-[#FAFDF0] flex-1 flex items-center justify-center">
+          <img src={authImage} alt="Auth" className="max-w-full h-auto" />
         </div>
-        <div className="flex-1">
-          <Outlet></Outlet>
+
+        {/* Left side form */}
+        <div className="flex-1 bg-white flex items-center justify-center">
+          <Outlet />
         </div>
       </div>
     </div>

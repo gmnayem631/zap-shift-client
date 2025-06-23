@@ -1,5 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router";
 
 const Login = () => {
   const {
@@ -11,20 +12,21 @@ const Login = () => {
     console.log(data);
   };
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className="w-3/4 mx-auto">
+      <h1 className="text-3xl font-extrabold mb-3">Welcome Back</h1>
       <fieldset className="fieldset">
         <label className="label">Email</label>
         <input
           type="email"
           {...register("email")}
-          className="input"
+          className="input w-full"
           placeholder="Email"
         />
         <label className="label">Password</label>
         <input
           type="password"
           {...register("password", { required: true, minLength: 6 })}
-          className="input"
+          className="input w-full"
           placeholder="Password"
         />
         {errors.password?.type === "required" && (
@@ -36,9 +38,14 @@ const Login = () => {
           </p>
         )}
         <div>
-          <a className="link link-hover">Forgot password?</a>
+          Don't have an account?{" "}
+          <Link to={"/register"} className="text-blue-500 font-extrabold">
+            Register
+          </Link>
         </div>
-        <button className="btn btn-neutral mt-4">Login</button>
+        <button className="btn btn-primary text-[#1e1e1e] text-lg mt-4">
+          Login
+        </button>
       </fieldset>
     </form>
   );
