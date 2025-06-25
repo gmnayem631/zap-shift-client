@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import locations from "../../../public/serviceCenter.json";
 
@@ -9,7 +9,7 @@ const SendParcel = () => {
     handleSubmit,
     watch,
     reset,
-    formState: { errors },
+    // formState: { errors },
   } = useForm();
 
   const [deliveryCost, setDeliveryCost] = useState(null);
@@ -21,17 +21,19 @@ const SendParcel = () => {
   const watchReceiverRegion = watch("receiverRegion");
   const watchReceiverDistrict = watch("receiverDistrict");
 
-  const getRegions = () => [...new Set(locations.map((loc) => loc.region))];
+  const getRegions = () => [
+    ...new Set(locations.map((location) => location.region)),
+  ];
 
   const getDistricts = (region) => {
     return locations
-      .filter((loc) => loc.region === region)
-      .map((loc) => loc.district);
+      .filter((location) => location.region === region)
+      .map((location) => location.district);
   };
 
   const getAreas = (region, district) => {
     const entry = locations.find(
-      (loc) => loc.region === region && loc.district === district
+      (location) => location.region === region && location.district === district
     );
     return entry ? entry.covered_area : [];
   };
@@ -64,34 +66,42 @@ const SendParcel = () => {
         {/* Parcel Info */}
         <div className="bg-base-200 p-4 rounded-2xl shadow">
           <h2 className="text-xl font-semibold mb-4">Parcel Info</h2>
-          <div className="flex items-center gap-6">
-            <label className="label cursor-pointer">
-              <input
-                type="radio"
-                value="document"
-                {...register("type", { required: true })}
-                className="radio checked:bg-blue-500"
-              />
-              <span className="ml-2">Document</span>
-            </label>
-            <label className="label cursor-pointer">
-              <input
-                type="radio"
-                value="non-document"
-                {...register("type", { required: true })}
-                className="radio checked:bg-blue-500"
-              />
-              <span className="ml-2">Non-Document</span>
-            </label>
-            {watchType === "non-document" && (
-              <input
-                type="number"
-                step="0.01"
-                placeholder="Weight (kg)"
-                {...register("weight")}
-                className="input input-bordered w-40"
-              />
-            )}
+          <div className="flex justify-center flex-col gap-6">
+            <div className="flex items-center gap-6">
+              <label className="label cursor-pointer">
+                <input
+                  type="radio"
+                  value="document"
+                  {...register("type", { required: true })}
+                  className="radio checked:bg-blue-500"
+                />
+                <span className="ml-2">Document</span>
+              </label>
+              <label className="label cursor-pointer">
+                <input
+                  type="radio"
+                  value="non-document"
+                  {...register("type", { required: true })}
+                  className="radio checked:bg-blue-500"
+                />
+                <span className="ml-2">Non-Document</span>
+              </label>
+            </div>
+            <input
+              type="text"
+              placeholder="Parcel Name"
+              {...register("title")}
+              className="input input-bordered w-1/3 rounded-md"
+              // disabled={watchType !== "non-document"}
+            />
+            <input
+              type="number"
+              step="0.01"
+              placeholder="Weight (kg)"
+              {...register("weight")}
+              className="input input-bordered w-40 rounded-md"
+              disabled={watchType !== "non-document"}
+            />
           </div>
         </div>
 
@@ -233,7 +243,10 @@ const SendParcel = () => {
               >
                 Cancel
               </button>
-              <button className="btn btn-primary" onClick={confirmSubmission}>
+              <button
+                className="btn btn-primary text-black"
+                onClick={confirmSubmission}
+              >
                 Confirm
               </button>
             </form>
