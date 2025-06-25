@@ -1,16 +1,33 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import SocialLogin from "./SocialLogin";
+import useAuth from "../../../hooks/useAuth";
 
 const Login = () => {
+  const { loginUser } = useAuth();
+  // console.log(loginUser);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const from = location.state?.from?.pathname || "/";
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
   const onSubmit = (data) => {
+    const { email, password } = data;
     console.log(data);
+    loginUser(email, password)
+      .then((result) => {
+        console.log(result);
+        navigate(from, { replace: true });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-3/4 mx-auto">
