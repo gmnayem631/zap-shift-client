@@ -3,11 +3,12 @@ import React from "react";
 import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { FaTrash, FaEye, FaMoneyBillWave } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const MyParcels = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
-  const { data: parcels = [] } = useQuery({
+  const { data: parcels = [], refetch } = useQuery({
     queryKey: ["my-parcels", user.email],
     queryFn: async () => {
       const response = await axiosSecure.get(`/parcels?email=${user.email}`);
@@ -27,8 +28,26 @@ const MyParcels = () => {
   };
 
   const handleDelete = (parcel) => {
-    // Delete logic here
-    console.log("Deleting parcel:", parcel);
+    Swal.fire({
+      title: "Are you sure?",
+      text: `Do you want to delete parcel "${parcel.title}"?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axiosSecure.delete(`/parcels/${parcel._id}`);
+          Swal.fire("Deleted!", "The parcel has been deleted.", "success");
+          refetch(); // Refresh the list
+        } catch (error) {
+          Swal.fire("Error", "Something went wrong while deleting.", "error");
+          console.log(error);
+        }
+      }
+    });
   };
   return (
     <div className="overflow-x-auto bg-base-100 shadow-md rounded-xl p-4">
@@ -38,6 +57,7 @@ const MyParcels = () => {
           <tr>
             <th>#</th>
             <th>Type</th>
+            <th>Title</th>
             <th>Created At</th>
             <th>Cost</th>
             <th>Payment</th>
@@ -49,6 +69,7 @@ const MyParcels = () => {
             <tr key={parcel._id}>
               <th>{index + 1}</th>
               <td className="capitalize">{parcel.type}</td>
+              <td className="capitalize">{parcel.title}</td>
               <td>{new Date(parcel.creation_date).toLocaleString()}</td>
               <td>৳{parcel.deliveryCost}</td>
               <td>
