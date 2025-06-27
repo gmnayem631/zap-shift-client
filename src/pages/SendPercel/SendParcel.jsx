@@ -3,10 +3,12 @@ import { useState } from "react";
 import Swal from "sweetalert2";
 import locations from "../../../public/serviceCenter.json";
 import useAuth from "../../hooks/useAuth";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const SendParcel = () => {
   const { user } = useAuth();
   const { register, handleSubmit, watch, reset } = useForm();
+  const axiosSecure = useAxiosSecure();
 
   const [deliveryCost, setDeliveryCost] = useState(null);
   const [formData, setFormData] = useState(null);
@@ -60,7 +62,7 @@ const SendParcel = () => {
     }
 
     setDeliveryCost(cost);
-    setFormData({
+    const parcelPayload = {
       ...data,
       parcelId: `P-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
       created_by: user?.email,
@@ -68,7 +70,8 @@ const SendParcel = () => {
       status: "created",
       paymentStatus: "unpaid",
       deliveryCost: cost,
-    });
+    };
+    setFormData(parcelPayload);
 
     let breakdownHtml = `
       <div style="text-align: left;">
@@ -77,8 +80,8 @@ const SendParcel = () => {
         <p><strong>Base Cost:</strong> ৳${baseCost}</p>
         ${
           data.type === "non-document" && extraKg > 0
-            ? `<p><strong>Extra Weight (${extraKg.toFixed(
-                2
+            ? `<p><strong>Extra Weight (${Math.ceil(
+                extraKg.toFixed(2)
               )}kg):</strong> ৳${extraCost}</p>`
             : ""
         }
@@ -98,16 +101,31 @@ const SendParcel = () => {
       icon: "info",
       showCancelButton: true,
       showDenyButton: true,
-      confirmButtonText: "Confirm",
+      confirmButtonText: "Proceed to Payment",
       denyButtonText: "Edit",
       cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
-        Swal.fire("Success!", `Parcel saved! Total cost: ৳${cost}`, "success");
-        console.log("Saved:", {
-          ...data,
-          creation_date: new Date().toISOString(),
-        });
+        axiosSecure
+          .post("/parcels", parcelPayload)
+          .then((response) => {
+            console.log(response.data);
+            if (response.data.insertedId) {
+              // TODO: redirect to a payment page
+              Swal.fire({
+                title: "Redirecting",
+                text: "Proceeding to payment gateway",
+                icon: "success",
+                timer: 1500,
+                showConfirmButton: false,
+              });
+            }
+            // reset();
+          })
+          .catch((error) => {
+            Swal.fire("Error", "Failed to save parcel", "error");
+            console.error(error);
+          });
         reset();
       } else if (result.isDenied) {
         // let user edit the form
@@ -153,7 +171,6 @@ const SendParcel = () => {
             />
             <input
               type="number"
-              step="0.01"
               placeholder="Weight (kg)"
               {...register("weight")}
               className="input input-bordered w-40 rounded-md"

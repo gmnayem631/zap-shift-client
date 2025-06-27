@@ -31,6 +31,17 @@ const Navbar = () => {
           Coverage
         </NavLink>
       </li>
+      {user ? (
+        <>
+          <li>
+            <NavLink to={"/dashboard"} className="text-lg">
+              Dashboard
+            </NavLink>
+          </li>
+        </>
+      ) : (
+        ""
+      )}
       <li>
         <NavLink className="text-lg">About Us</NavLink>
       </li>
