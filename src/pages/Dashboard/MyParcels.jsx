@@ -37,6 +37,7 @@ const MyParcels = () => {
       cancelButtonColor: "#3085d6",
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
+      console.log(result.data);
       if (result.isConfirmed) {
         try {
           await axiosSecure.delete(`/parcels/${parcel._id}`);
@@ -98,7 +99,7 @@ const MyParcels = () => {
                   <FaMoneyBillWave />
                 </button>
                 <button
-                  onClick={handleDelete}
+                  onClick={() => handleDelete(parcel)}
                   className="btn btn-sm btn-error text-white"
                 >
                   <FaTrash />
