@@ -1,16 +1,12 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import Swal from "sweetalert2";
 import locations from "../../../public/serviceCenter.json";
+import useAuth from "../../hooks/useAuth";
 
 const SendParcel = () => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    reset,
-    // formState: { errors },
-  } = useForm();
+  const { user } = useAuth();
+  const { register, handleSubmit, watch, reset } = useForm();
 
   const [deliveryCost, setDeliveryCost] = useState(null);
   const [formData, setFormData] = useState(null);
@@ -39,26 +35,88 @@ const SendParcel = () => {
   };
 
   const onSubmit = (data) => {
-    const baseCost = data.type === "document" ? 50 : 100;
-    const weightCost =
-      data.type === "non-document" ? (parseFloat(data.weight) || 0) * 10 : 0;
-    const serviceFee = 20;
-    const total = baseCost + weightCost + serviceFee;
-    setDeliveryCost(total);
-    setFormData({ ...data, creation_date: new Date().toISOString() });
-    document.getElementById("confirm_modal").showModal();
-  };
+    const weight = parseFloat(data.weight) || 0;
+    const isSameDistrict = data.senderDistrict === data.receiverDistrict;
+    let cost = 0;
+    let baseCost = 0;
+    let extraKg = 0;
+    let extraCost = 0;
+    let outOfDistrictCharge = 0;
 
-  const confirmSubmission = () => {
-    toast.success(`Parcel saved! Cost: ৳${deliveryCost}`);
-    console.log("Saved:", formData);
-    reset();
-    document.getElementById("confirm_modal").close();
+    if (data.type === "document") {
+      baseCost = isSameDistrict ? 60 : 80;
+      cost = baseCost;
+    } else {
+      if (weight <= 3) {
+        baseCost = isSameDistrict ? 110 : 150;
+        cost = baseCost;
+      } else {
+        extraKg = weight - 3;
+        extraCost = extraKg * 40;
+        baseCost = isSameDistrict ? 110 : 150;
+        outOfDistrictCharge = isSameDistrict ? 0 : 40;
+        cost = baseCost + extraCost + outOfDistrictCharge;
+      }
+    }
+
+    setDeliveryCost(cost);
+    setFormData({
+      ...data,
+      parcelId: `P-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      created_by: user?.email,
+      creation_date: new Date().toISOString(),
+      status: "created",
+      paymentStatus: "unpaid",
+      deliveryCost: cost,
+    });
+
+    let breakdownHtml = `
+      <div style="text-align: left;">
+        <p><strong>Type:</strong> ${data.type}</p>
+        <p><strong>Same District:</strong> ${isSameDistrict ? "Yes" : "No"}</p>
+        <p><strong>Base Cost:</strong> ৳${baseCost}</p>
+        ${
+          data.type === "non-document" && extraKg > 0
+            ? `<p><strong>Extra Weight (${extraKg.toFixed(
+                2
+              )}kg):</strong> ৳${extraCost}</p>`
+            : ""
+        }
+        ${
+          data.type === "non-document" && !isSameDistrict
+            ? `<p><strong>Out of District Charge:</strong> ৳${outOfDistrictCharge}</p>`
+            : ""
+        }
+        <hr style="margin: 10px 0;">
+        <h3 style="font-size: 1.2rem;"><strong>Total Cost: ৳${cost}</strong></h3>
+      </div>
+    `;
+
+    Swal.fire({
+      title: "Confirm Parcel Details",
+      html: breakdownHtml,
+      icon: "info",
+      showCancelButton: true,
+      showDenyButton: true,
+      confirmButtonText: "Confirm",
+      denyButtonText: "Edit",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire("Success!", `Parcel saved! Total cost: ৳${cost}`, "success");
+        console.log("Saved:", {
+          ...data,
+          creation_date: new Date().toISOString(),
+        });
+        reset();
+      } else if (result.isDenied) {
+        // let user edit the form
+      }
+    });
   };
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <Toaster />
       <h1 className="text-4xl font-extrabold mb-6">Add Parcel</h1>
       <p className="text-2xl text-gray-500 mb-2">Enter your parcel details</p>
 
@@ -92,7 +150,6 @@ const SendParcel = () => {
               placeholder="Parcel Name"
               {...register("title")}
               className="input input-bordered w-1/3 rounded-md"
-              // disabled={watchType !== "non-document"}
             />
             <input
               type="number"
@@ -229,30 +286,38 @@ const SendParcel = () => {
         </button>
       </form>
 
-      {/* Confirmation Modal */}
-      <dialog id="confirm_modal" className="modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Delivery Cost: ৳{deliveryCost}</h3>
-          <p className="py-4">Do you want to confirm and save this parcel?</p>
-          <div className="modal-action">
-            <form method="dialog" className="flex gap-2">
-              <button
-                className="btn btn-outline"
-                type="button"
-                onClick={() => document.getElementById("confirm_modal").close()}
-              >
-                Cancel
-              </button>
-              <button
-                className="btn btn-primary text-black"
-                onClick={confirmSubmission}
-              >
-                Confirm
-              </button>
-            </form>
+      <div className="">
+        {deliveryCost !== null && (
+          <div className="text-xl mt-4 font-semibold text-center">
+            Estimated Delivery Cost: ৳{deliveryCost}
           </div>
-        </div>
-      </dialog>
+        )}
+      </div>
+      <div className="">
+        {formData && (
+          <div className="mt-6 p-4 bg-base-200 rounded-xl">
+            <h2 className="text-xl font-semibold mb-2">
+              Last Submitted Parcel Info:
+            </h2>
+            <p>
+              <strong>Sender:</strong> {formData.senderName}
+            </p>
+            <p>
+              <strong>Receiver:</strong> {formData.receiverName}
+            </p>
+            <p>
+              <strong>Type:</strong> {formData.type}
+            </p>
+            <p>
+              <strong>Weight:</strong> {formData.weight} kg
+            </p>
+            <p>
+              <strong>Submitted At:</strong>{" "}
+              {new Date(formData.creation_date).toLocaleString()}
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
