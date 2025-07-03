@@ -4,10 +4,12 @@ import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { FaTrash, FaEye, FaMoneyBillWave } from "react-icons/fa";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router";
 
 const MyParcels = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
+  const navigate = useNavigate();
   const { data: parcels = [], refetch } = useQuery({
     queryKey: ["my-parcels", user.email],
     queryFn: async () => {
@@ -22,9 +24,10 @@ const MyParcels = () => {
     console.log("Viewing parcel:", parcel);
   };
 
-  const handlePay = (parcel) => {
+  const handlePay = (id) => {
     // Payment logic here
-    console.log("Paying for parcel:", parcel);
+    console.log("Paying for parcel:", id);
+    navigate(`/dashboard/payment/${id}`);
   };
 
   const handleDelete = (parcel) => {
@@ -92,7 +95,7 @@ const MyParcels = () => {
                   <FaEye />
                 </button>
                 <button
-                  onClick={handlePay}
+                  onClick={() => handlePay(parcel._id)}
                   disabled={parcel.paymentStatus === "paid"}
                   className="btn btn-sm btn-success text-white"
                 >
