@@ -68,7 +68,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/dashboard/payment/:id",
+        path: "/dashboard/payment/:parcelId",
         Component: Payment,
       },
     ],
