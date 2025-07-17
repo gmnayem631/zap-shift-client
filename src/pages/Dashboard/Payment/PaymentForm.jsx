@@ -1,12 +1,16 @@
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import useAuth from "../../../hooks/useAuth";
+import Swal from "sweetalert2";
 
 const PaymentForm = () => {
   const stripe = useStripe();
   const elements = useElements();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
   const [error, setError] = useState("");
   const { parcelId } = useParams();
@@ -67,17 +71,43 @@ const PaymentForm = () => {
       payment_method: {
         card: elements.getElement(CardElement),
         billing_details: {
-          name: "Ben",
+          name: user.displayName,
+          email: user.email,
         },
       },
     });
 
     if (result.error) {
-      console.log(result.error.message);
+      setError(result.error.message);
     } else {
+      setError("");
       if (result.paymentIntent.status === "succeeded") {
         console.log("Payment Succeeded");
         console.log(result);
+
+        //mark parcel paid and create payment history
+
+        const transactionId = result.paymentIntent.id;
+
+        const paymentData = {
+          parcelId,
+          userEmail: user.email,
+          amount,
+          transactionId: transactionId,
+          paymentMethod: result.paymentIntent.payment_method_types,
+        };
+        const paymentRes = await axiosSecure.post("/payments", paymentData);
+        console.log("payment response", paymentRes.data);
+        if (paymentRes.data.paymentResult.insertedId) {
+          await Swal.fire({
+            icon: "success",
+            title: "Payment Successful",
+            html: `<strong>Transaction ID:</strong> <code>${transactionId}</code>`,
+            confirmButtonText: "Go to my parcels",
+          });
+
+          navigate("/dashboard/myParcels");
+        }
       }
     }
   };
@@ -93,7 +123,7 @@ const PaymentForm = () => {
         className="btn btn-primary text-black text-lg w-full"
         disabled={!stripe}
       >
-        Pay ৳{amount}
+        Pay ${amount}
       </button>
     </form>
   );
