@@ -12,6 +12,7 @@ import SendParcel from "../pages/SendPercel/SendParcel";
 import DashboardLayout from "../layouts/DashboardLayout";
 import MyParcels from "../pages/Dashboard/MyParcels";
 import Payment from "../pages/Dashboard/Payment/Payment";
+import PaymentHistory from "../pages/Dashboard/PaymentHistory/PaymentHistory";
 
 const router = createBrowserRouter([
   {
@@ -70,6 +71,10 @@ const router = createBrowserRouter([
       {
         path: "/dashboard/payment/:parcelId",
         Component: Payment,
+      },
+      {
+        path: "/dashboard/paymentHistory",
+        Component: PaymentHistory,
       },
     ],
   },

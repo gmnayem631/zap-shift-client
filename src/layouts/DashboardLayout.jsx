@@ -1,6 +1,8 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router";
 import ProFastLogo from "../pages/Home/shared/ProFastLogo/ProFastLogo";
+import { HiHome } from "react-icons/hi";
+import { FiPackage, FiCreditCard, FiMapPin, FiUser } from "react-icons/fi";
 
 const DashboardLayout = () => {
   return (
@@ -46,10 +48,29 @@ const DashboardLayout = () => {
           {/* Sidebar content here */}
           <ProFastLogo></ProFastLogo>
           <li>
-            <a>Home</a>
+            <NavLink to="/dashboard">
+              <HiHome className="inline mr-2" /> Home
+            </NavLink>
           </li>
           <li>
-            <NavLink to={"/dashboard/myParcels"}>My Parcels</NavLink>
+            <NavLink to="/dashboard/myParcels">
+              <FiPackage className="inline mr-2" /> My Parcels
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/dashboard/paymentHistory">
+              <FiCreditCard className="inline mr-2" /> Payment History
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/dashboard/track">
+              <FiMapPin className="inline mr-2" /> Track Package
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/dashboard/profile">
+              <FiUser className="inline mr-2" /> Update Profile
+            </NavLink>
           </li>
         </ul>
       </div>
