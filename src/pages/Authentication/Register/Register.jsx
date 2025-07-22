@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
 import useAuth from "../../../hooks/useAuth";
 import SocialLogin from "../Login/SocialLogin";
+import axios from "axios";
 
 const Register = () => {
   const {
@@ -11,7 +12,9 @@ const Register = () => {
     formState: { errors },
   } = useForm();
 
-  const { createUser } = useAuth();
+  const { createUser, updateUserProfile } = useAuth();
+
+  const [profilePic, setProfilePic] = useState("");
 
   const onSubmit = (data) => {
     const { email, password } = data;
@@ -19,16 +22,37 @@ const Register = () => {
     createUser(email, password)
       .then((result) => {
         console.log(result.user);
+
+        // update user info in database
+
+        // update user profile in firebase
+        const userProfile = {
+          displayName: data.name,
+          photoURL: profilePic,
+        };
+        updateUserProfile(userProfile)
+          .then(() => {
+            console.log("profile updated successfully");
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       })
       .catch((error) => {
         console.log(error);
       });
   };
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const image = e.target.files[0];
     console.log(image);
     const formData = new FormData();
-    formData.append(image);
+    formData.append("image", image);
+
+    const imageUploadURL = `https://api.imgbb.com/1/upload?key=${
+      import.meta.env.VITE_upload_image_key
+    }`;
+    const res = await axios.post(imageUploadURL, formData);
+    setProfilePic(res.data.data.url);
   };
 
   return (
