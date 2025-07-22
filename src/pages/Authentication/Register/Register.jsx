@@ -24,6 +24,12 @@ const Register = () => {
         console.log(error);
       });
   };
+  const handleImageUpload = (e) => {
+    const image = e.target.files[0];
+    console.log(image);
+    const formData = new FormData();
+    formData.append(image);
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-3/4 mx-auto">
@@ -32,6 +38,28 @@ const Register = () => {
         <p className="font-medium">Register with ProFast</p>
       </div>
       <fieldset className="fieldset">
+        {/* Image field */}
+        <label className="label">Your Profile Picture</label>
+        <input
+          type="file"
+          name="image"
+          // accept="image/*"
+          // {...register("image", { required: true })}
+          onChange={handleImageUpload}
+          className="input w-full"
+        />
+
+        {/* Name field */}
+        <label className="label">Your Name</label>
+        <input
+          type="text"
+          {...register("name", { required: true })}
+          className="input w-full"
+          placeholder="Your Name"
+        />
+        {errors.name?.type === "required" && (
+          <p className="text-red-500">Name is required</p>
+        )}
         {/* Email field */}
         <label className="label">Email</label>
         <input
