@@ -43,6 +43,11 @@ const Navbar = () => {
         ""
       )}
       <li>
+        <NavLink to={"/beARider"} className="text-lg">
+          Be a Rider
+        </NavLink>
+      </li>{" "}
+      <li>
         <NavLink className="text-lg">About Us</NavLink>
       </li>
     </>
