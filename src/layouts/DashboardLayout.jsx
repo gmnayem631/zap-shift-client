@@ -9,6 +9,7 @@ import {
   FiUser,
   FiCheckCircle,
   FiClock,
+  FiShield,
 } from "react-icons/fi";
 
 const DashboardLayout = () => {
@@ -87,6 +88,11 @@ const DashboardLayout = () => {
           <li>
             <NavLink to="/dashboard/pendingRiders">
               <FiClock className="inline mr-2" /> Pending Riders
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/dashboard/makeAdmin">
+              <FiShield className="inline mr-2" /> Make Admin
             </NavLink>
           </li>
         </ul>
