@@ -38,10 +38,11 @@ const PendingRiders = () => {
     setModalIsOpen(false);
   };
 
-  const updateRiderStatus = async (riderId, newStatus) => {
+  const updateRiderStatus = async (riderId, newStatus, email) => {
     try {
       const res = await axiosSecure.patch(`/riders/${riderId}/status`, {
         status: newStatus,
+        email,
       });
 
       if (res.data.modifiedCount) {
@@ -52,7 +53,7 @@ const PendingRiders = () => {
           } successfully.`,
           "success"
         );
-        refetch(); // Reload riders after update
+        refetch();
         closeModal();
       } else {
         Swal.fire("Error", "Failed to update rider status.", "error");
@@ -66,7 +67,7 @@ const PendingRiders = () => {
   if (isLoading) {
     return (
       <div className="text-center py-10">
-        <span className="loading loading-spinner loading-lg"></span>
+        <span className="loading loading-infinity loading-lg"></span>
       </div>
     );
   }
@@ -91,7 +92,7 @@ const PendingRiders = () => {
             <tr>
               <th>Name</th>
               <th>Email</th>
-              <th>Phone</th>
+              <th>Location</th>
               <th>Bike Brand</th>
               <th>Status</th>
               <th>Actions</th>
@@ -102,7 +103,7 @@ const PendingRiders = () => {
               <tr key={rider._id}>
                 <td>{rider.name}</td>
                 <td>{rider.email}</td>
-                <td>{rider.phoneNumber}</td>
+                <td>{rider.district}</td>
                 <td>{rider.bikeBrand}</td>
                 <td>
                   <span className="badge badge-warning">{rider.status}</span>
@@ -116,13 +117,17 @@ const PendingRiders = () => {
                   </button>
                   <button
                     className="btn btn-sm btn-success"
-                    onClick={() => updateRiderStatus(rider._id, "active")}
+                    onClick={() =>
+                      updateRiderStatus(rider._id, "active", rider.email)
+                    }
                   >
                     Approve
                   </button>
                   <button
                     className="btn btn-sm btn-error"
-                    onClick={() => updateRiderStatus(rider._id, "cancelled")}
+                    onClick={() =>
+                      updateRiderStatus(rider._id, "cancelled", rider.email)
+                    }
                   >
                     Cancel
                   </button>

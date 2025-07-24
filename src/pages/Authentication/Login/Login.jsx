@@ -57,7 +57,11 @@ const Login = () => {
         )}
         <div>
           Don't have an account?{" "}
-          <Link to={"/register"} className="text-blue-500 font-extrabold">
+          <Link
+            to={"/register"}
+            state={{ from }}
+            className="text-blue-500 font-extrabold"
+          >
             Register
           </Link>
         </div>
